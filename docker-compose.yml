@@ -1,0 +1,36 @@
+services:
+  sftp-Azurite:
+    image: mcr.microsoft.com/azure-storage/azurite
+    command: azurite --skipApiVersionCheck --blobHost 0.0.0.0 --queueHost 0.0.0.0
+    ports:
+      - "12000:10000"
+      - "12001:10001"
+      - "12002:10002"
+    networks:
+      - sftp
+
+  azure-function:
+    image: mcr.microsoft.com/azure-functions/node:4-node20
+    platform: linux/amd64
+    volumes:
+      - ./app:/home/site/wwwroot
+    ports:
+      - "7072:7071"
+    command:
+      - /bin/sh
+      - -c
+      - |
+        cd /home/site/wwwroot
+        npm install -g azure-functions-core-tools@4.0.6280
+        func --version
+        npm install
+        npm run start
+    environment:
+      AzureWebJobsScriptRoot: /home/site/wwwroot
+      AzureFunctionsJobHost__Logging__Console__IsEnabled: true
+      AzureWebJobsStorage: DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://sftp-Azurite:10000/devstoreaccount1;QueueEndpoint=http://sftp-Azurite:10001/devstoreaccount1;TableEndpoint=http://sftp-Azurite:10002/devstoreaccount1;
+    networks:
+      - sftp
+
+networks:
+  sftp:
