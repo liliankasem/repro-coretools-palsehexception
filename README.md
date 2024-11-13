@@ -12,6 +12,7 @@ Exception:
 
 1. Clone the repo
 1. Run `docker-compose up`
+1. Double check the core tools version being used in the container
 
 #### Last working version
 
