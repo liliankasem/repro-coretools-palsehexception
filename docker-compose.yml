@@ -11,7 +11,7 @@ services:
 
   azure-function:
     image: mcr.microsoft.com/azure-functions/node:4-node20
-    platform: linux/amd64
+    # platform: linux/amd64 (for macos amd64 only)
     volumes:
       - ./app:/home/site/wwwroot
     ports:
@@ -21,7 +21,7 @@ services:
       - -c
       - |
         cd /home/site/wwwroot
-        npm install -g azure-functions-core-tools@4.0.6280
+        npm install -g azure-functions-core-tools
         func --version
         npm install
         npm run start
